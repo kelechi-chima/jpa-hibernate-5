@@ -4,7 +4,7 @@
         strategy = "enhanced-sequence",
         parameters = {
                 @org.hibernate.annotations.Parameter(name = "sequence_name", value = "JPA_TUTORIAL_SEQ"),
-                @org.hibernate.annotations.Parameter(name = "initial_value", value = "1000"),
+                @org.hibernate.annotations.Parameter(name = "initial_value", value = "1000")
         }
 )
 
