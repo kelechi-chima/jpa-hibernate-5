@@ -4,7 +4,7 @@
     http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
 
-    <persistence-unit name="jpa-tutorial" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="auction" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <properties>

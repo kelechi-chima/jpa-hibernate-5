@@ -20,9 +20,11 @@ public class Auction {
     protected List<Bid> bids;
 
     @Temporal(value = TemporalType.TIMESTAMP)
+    @Column(name = "start_date")
     protected Date startDate;
 
     @Temporal(value = TemporalType.TIMESTAMP)
+    @Column(name = "end_date")
     protected Date endDate;
 
     public Item getItem() {

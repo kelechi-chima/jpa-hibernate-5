@@ -1,11 +1,17 @@
 package com.kchima.jpa.tutorial;
 
+import com.kchima.jpa.tutorial.model.CreditCardPayment;
+import com.kchima.jpa.tutorial.model.DebitCardPayment;
 import com.kchima.jpa.tutorial.model.Item;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -18,86 +24,128 @@ public class App {
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
     public static void main( String[] args ) {
-        EntityManagerFactory entityManagerFactory = null;
-        EntityManager entityManager = null;
+        EntityManagerFactory emf = null;
+        EntityManager em = null;
 
         try {
-            entityManagerFactory = Persistence.createEntityManagerFactory("jpa-tutorial");
-            entityManager = entityManagerFactory.createEntityManager();
-            EntityTransaction tx = entityManager.getTransaction();
+            emf = Persistence.createEntityManagerFactory("auction");
+            em = emf.createEntityManager();
+
+            em.getTransaction().begin();
+            CreditCardPayment creditCardPayment = new CreditCardPayment();
+            creditCardPayment.setCardNumber("40003000");
+            creditCardPayment.setCardExpiryDate("09/16");
+            creditCardPayment.setDate(new Date());
+            creditCardPayment.setAmount(BigDecimal.TEN);
+            em.persist(creditCardPayment);
+            em.getTransaction().commit();
+            logger.info("persisted: {}", creditCardPayment);
+
+            em.getTransaction().begin();
+            DebitCardPayment debitCardPayment = new DebitCardPayment();
+            debitCardPayment.setCardNumber("40002853");
+            debitCardPayment.setCardExpiryDate("11/17");
+            debitCardPayment.setDate(new Date());
+            debitCardPayment.setAmount(new BigDecimal("11.00"));
+            em.persist(debitCardPayment);
+            em.getTransaction().commit();
+            logger.info("persisted: {}", debitCardPayment);
+
+            em.getTransaction().begin();
+            List<CreditCardPayment> creditCardPayments = em.createQuery("select ccp from CreditCardPayment ccp", CreditCardPayment.class).getResultList();
+            assertFalse(creditCardPayments.isEmpty());
+            for (CreditCardPayment ccp : creditCardPayments) {
+                logger.info("retrieved: {}", ccp);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            logger.error("Exception: ", e);
+        } finally {
+            closePersistenceContext(em, emf);
+        }
+    }
+
+    private static void exercisePersistenceOperations() {
+        EntityManagerFactory emf = null;
+        EntityManager em = null;
+
+        try {
+            emf = Persistence.createEntityManagerFactory("auction");
+            em = emf.createEntityManager();
+            EntityTransaction tx = em.getTransaction();
             tx.begin();
             Item item = new Item();
             item.setName("HTC One M9+ Supreme Camera");
-            entityManager.persist(item);
+            em.persist(item);
             tx.commit();
-            entityManager.clear();
+            em.clear();
             logger.debug("persisted: {}", item);
 
             Long itemId = item.getId();
 
             tx.begin();
-            Item managedOne = entityManager.find(Item.class, itemId);
-            Item managedTwo = entityManager.find(Item.class, itemId);
+            Item managedOne = em.find(Item.class, itemId);
+            Item managedTwo = em.find(Item.class, itemId);
             assertThat(managedTwo, sameInstance(managedOne));
             String sony = "Sony Xperia Z5 Premium Dual";
             managedOne.setName(sony);
-            entityManager.persist(managedOne);
+            em.persist(managedOne);
             tx.commit();
-            entityManager.clear();
+            em.clear();
             logger.debug("updated: {}", managedOne);
 
             tx.begin();
-            Item itemQueuedForRemoval = entityManager.find(Item.class, itemId);
-            entityManager.remove(itemQueuedForRemoval);
-            assertFalse(entityManager.contains(itemQueuedForRemoval));
+            Item itemQueuedForRemoval = em.find(Item.class, itemId);
+            em.remove(itemQueuedForRemoval);
+            assertFalse(em.contains(itemQueuedForRemoval));
             assertNotNull(itemQueuedForRemoval.getId());
             tx.rollback();
 
             tx.begin();
-            Item itemToBeRefreshed = entityManager.find(Item.class, itemId);
+            Item itemToBeRefreshed = em.find(Item.class, itemId);
             tx.rollback();
-            entityManager.clear();
+            em.clear();
 
             itemToBeRefreshed.setName("iPhone 6");
 
             tx.begin();
-            itemToBeRefreshed = entityManager.merge(itemToBeRefreshed);
-            entityManager.refresh(itemToBeRefreshed);
+            itemToBeRefreshed = em.merge(itemToBeRefreshed);
+            em.refresh(itemToBeRefreshed);
             assertThat(itemToBeRefreshed.getName(), equalTo(sony));
             tx.commit();
             logger.debug("refreshed: {}", itemToBeRefreshed);
 
             tx.begin();
-            Item readOnlyItem = entityManager.find(Item.class, itemId);
-            entityManager.unwrap(Session.class).setReadOnly(readOnlyItem, true);
+            Item readOnlyItem = em.find(Item.class, itemId);
+            em.unwrap(Session.class).setReadOnly(readOnlyItem, true);
             readOnlyItem.setName("Microsoft Lumia 950 XL Dual Sim");
-            entityManager.persist(readOnlyItem);
+            em.persist(readOnlyItem);
             tx.commit();
             logger.debug("read-only: {}", readOnlyItem);
 
             tx.begin();
-            TypedQuery<Item> typedQuery = entityManager.createQuery("select i from Item i", Item.class).
+            TypedQuery<Item> typedQuery = em.createQuery("select i from Item i", Item.class).
                     setHint(org.hibernate.annotations.QueryHints.READ_ONLY, true);
 
             for (Item i : typedQuery.getResultList()) {
                 i.setName("Motorola X Droid");
-                entityManager.persist(i);
+                em.persist(i);
             }
 
-            entityManager.flush();
+            em.flush();
             tx.commit();
 
-            logger.debug("flush mode: {}", entityManager.getFlushMode());
+            logger.debug("flush mode: {}", em.getFlushMode());
 
-            entityManager.clear();
+            em.clear();
 
             tx.begin();
             String desire = "HTC Desire 9";
-            Item autoFlushedItem = entityManager.find(Item.class, itemId);
+            Item autoFlushedItem = em.find(Item.class, itemId);
             autoFlushedItem.setName(desire);
             //entityManager.persist(autoFlushedItem);
 
-            String updatedName = (String) entityManager.createQuery("select i.name from Item i where i.id = :id").
+            String updatedName = (String) em.createQuery("select i.name from Item i where i.id = :id").
                     setParameter("id", itemId).
                     getSingleResult();
 
@@ -106,13 +154,17 @@ public class App {
         } catch (Exception e) {
             logger.error("Exception: ", e);
         } finally {
-            if (entityManager != null && entityManager.isOpen()) {
-                entityManager.close();
-            }
+            closePersistenceContext(em, emf);
+        }
+    }
 
-            if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
-                entityManagerFactory.close();
-            }
+    private static void closePersistenceContext(EntityManager em, EntityManagerFactory emf) {
+        if (em != null && em.isOpen()) {
+            em.close();
+        }
+
+        if (emf != null && emf.isOpen()) {
+            emf.close();
         }
     }
 }

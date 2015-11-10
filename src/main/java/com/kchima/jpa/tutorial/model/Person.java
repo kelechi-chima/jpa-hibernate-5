@@ -12,11 +12,14 @@ public class Person {
     @GeneratedValue(generator = "ID_GENERATOR")
     protected Long id;
 
+    @Column(name = "first_name")
     protected String firstName;
 
+    @Column(name = "last_name")
     protected String lastName;
 
     @Temporal(value = TemporalType.DATE)
+    @Column(name = "date_of_birth")
     protected Date dateOfBirth;
 
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY)
