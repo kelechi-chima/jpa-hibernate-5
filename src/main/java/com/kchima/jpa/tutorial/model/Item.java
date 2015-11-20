@@ -4,6 +4,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @DynamicInsert
@@ -17,6 +18,13 @@ public class Item {
     protected Long id;
 
     protected String name;
+
+    @Column(name = "buy_now_price")
+    protected BigDecimal buyNowPrice;
+
+    @ManyToOne
+    @JoinColumn(name = "CATEGORY_ID")
+    protected Category category;
 
     @ManyToOne
     @JoinColumn(name = "PERSON_ID")
@@ -37,6 +45,14 @@ public class Item {
         this.name = name;
     }
 
+    public BigDecimal getBuyNowPrice() {
+        return buyNowPrice;
+    }
+
+    public void setBuyNowPrice(BigDecimal buyNowPrice) {
+        this.buyNowPrice = buyNowPrice;
+    }
+
     public Person getSeller() {
         return seller;
     }
@@ -53,20 +69,30 @@ public class Item {
         this.auction = auction;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Item item = (Item) o;
-        return Objects.equals(id, item.id) &&
-                Objects.equals(name, item.name) &&
-                Objects.equals(seller, item.seller) &&
-                Objects.equals(auction, item.auction);
+        return Objects.equals(id, item.getId()) &&
+                Objects.equals(name, item.getName()) &&
+                Objects.equals(buyNowPrice, item.getBuyNowPrice()) &&
+                Objects.equals(seller, item.getSeller()) &&
+                Objects.equals(auction, item.getAuction()) &&
+                Objects.equals(category, item.getCategory());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, seller, auction);
+        return Objects.hash(id, name, buyNowPrice, seller, auction, category);
     }
 
     @Override
@@ -74,8 +100,10 @@ public class Item {
         return "Item{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", buy_now_price=" + buyNowPrice +
                 ", seller=" + seller +
                 ", auction=" + auction +
+                ", category=" + category +
                 '}';
     }
 }

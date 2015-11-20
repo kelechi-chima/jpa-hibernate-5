@@ -22,7 +22,7 @@ public class App {
         EntityManager entityManager = null;
 
         try {
-            entityManagerFactory = Persistence.createEntityManagerFactory("jpa-tutorial");
+            entityManagerFactory = Persistence.createEntityManagerFactory("auction");
             entityManager = entityManagerFactory.createEntityManager();
             EntityTransaction tx = entityManager.getTransaction();
             tx.begin();

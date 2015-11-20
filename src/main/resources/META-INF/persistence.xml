@@ -4,7 +4,7 @@
     http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
 
-    <persistence-unit name="jpa-tutorial" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="auction" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <properties>
@@ -13,13 +13,11 @@
             <property name="javax.persistence.jdbc.password" value="test"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
 
-            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="false"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="create"/>
             <property name="hibernate.use_identifier_rollback" value="false"/>
-            <!--<property name="hibernate.physical_naming_strategy"
-                      value="com.kchima.jpa.tutorial.model.naming.KCNamingStrategy"/>-->
 
             <property name="hibernate.c3p0.min_size" value="5"/>
             <property name="hibernate.c3p0.max_size" value="20"/>
