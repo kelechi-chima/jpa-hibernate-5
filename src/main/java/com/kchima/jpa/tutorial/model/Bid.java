@@ -24,8 +24,10 @@ public class Bid {
     protected BigDecimal amount;
 
     @Temporal(value = TemporalType.TIMESTAMP)
+    @Column(name = "bid_date")
     protected Date date;
 
+    @Column(name = "winning_bid")
     protected Boolean winningBid;
 
     public Person getBidder() {
