@@ -15,12 +15,11 @@
         <hibernate.version>5.0.1.Final</hibernate.version>
     </properties>
 
-
     <dependencies>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.36</version>
+        	<groupId>com.h2database</groupId>
+        	<artifactId>h2</artifactId>
+        	<version>1.4.193</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -75,7 +74,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.6.0</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>

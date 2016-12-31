@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Bid {
 
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue
     protected Long id;
 
     @ManyToOne

@@ -1,9 +1,22 @@
 package com.kchima.jpa.tutorial.model;
 
-import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
 @Entity
 @Table(name = "PERSON", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
@@ -13,7 +26,7 @@ public class Person {
     protected long version;
 
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue
     protected Long id;
 
     protected String email;
@@ -29,7 +42,7 @@ public class Person {
     protected Date dateOfBirth;
 
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    protected List<Item> items;
+    protected List<Item> items = new ArrayList<>();
 
     @OneToMany(mappedBy = "bidder", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     protected List<Bid> bids;

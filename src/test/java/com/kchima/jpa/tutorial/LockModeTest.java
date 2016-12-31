@@ -2,20 +2,20 @@ package com.kchima.jpa.tutorial;
 
 import com.kchima.jpa.tutorial.model.Category;
 import com.kchima.jpa.tutorial.model.Item;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.Persistence;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
-public class ManualVersionCheckTest {
+public class LockModeTest {
 
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("auction");
     private static EntityManager em;
@@ -91,14 +91,15 @@ public class ManualVersionCheckTest {
     }
 
     @Test
-    public void queryWithSetLockModeShouldDetectDifferentDatabaseVersionDuringFlush() {
+    public void queryWithPessimisticReadLock() {
         em.getTransaction().begin();
 
         BigDecimal totalPrice = BigDecimal.ZERO;
 
         for (Long categoryId : categories) {
             List<Item> items = em.createQuery("select i from Item i where i.category.id = :catId").
-                    setLockMode(LockModeType.OPTIMISTIC).
+                    setLockMode(LockModeType.PESSIMISTIC_READ).
+                    setHint("javax.persistence.lock.timeout", 5000).
                     setParameter("catId", categoryId).
                     getResultList();
 
@@ -108,6 +109,18 @@ public class ManualVersionCheckTest {
         }
 
         em.getTransaction().commit();
-        assertEquals("152.00", totalPrice.toString());
+        assertEquals(152, totalPrice.longValue());
+    }
+
+    @Test
+    public void findWithPessimisticWriteLock() {
+        em.getTransaction().begin();
+
+        Map<String, Object> hints = new HashMap<>();
+        hints.put("javax.persistence.lock.timeout", 2000);
+        Category category = em.find(Category.class, categories.get(0), LockModeType.PESSIMISTIC_WRITE, hints);
+        category.setName("Household");
+
+        em.getTransaction().commit();
     }
 }

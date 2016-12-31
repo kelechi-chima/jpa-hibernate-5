@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MergeTest {
 
-    private final EntityManagerFactory emf = Persistence.createEntityManagerFactory("auction");
+    private final EntityManagerFactory emf = Persistence.createEntityManagerFactory("test");
     private EntityManager em;
 
     @Before

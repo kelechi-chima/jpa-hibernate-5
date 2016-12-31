@@ -5,7 +5,9 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @DynamicInsert
 @DynamicUpdate
@@ -13,8 +15,11 @@ import java.util.Objects;
 @Table(name = "ITEM")
 public class Item {
 
+    @Version
+    protected long version;
+
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue
     protected Long id;
 
     protected String name;
@@ -22,16 +27,21 @@ public class Item {
     @Column(name = "buy_now_price")
     protected BigDecimal buyNowPrice;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID")
     protected Category category;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PERSON_ID")
     protected Person seller;
 
-    @OneToOne(mappedBy = "item")
+    @OneToOne(mappedBy = "item", fetch = FetchType.LAZY)
     protected Auction auction;
+
+    @ElementCollection
+    @CollectionTable(name = "IMAGE", joinColumns = @JoinColumn(name = "ITEM_ID"))
+    @Column(name = "FILENAME")
+    protected Set<String> images = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -75,6 +85,10 @@ public class Item {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Set<String> getImages() {
+        return images;
     }
 
     @Override

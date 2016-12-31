@@ -9,7 +9,7 @@ import java.util.List;
 public class Auction {
 
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue
     protected Long id;
 
     @OneToOne

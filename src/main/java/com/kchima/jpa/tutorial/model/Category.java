@@ -10,7 +10,7 @@ import java.util.Set;
 public class Category {
 
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue
     protected Long id;
 
     protected String name;

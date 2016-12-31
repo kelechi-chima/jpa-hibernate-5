@@ -9,7 +9,7 @@
 
     <logger name="com.kchima" level="DEBUG"/>
     <logger name="org.hibernate.type.BasicTypeRegistry" level="INFO"/>
-    <logger name="org.hibernate.type" level="DEBUG"/>
+    <logger name="org.hibernate.type" level="TRACE"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />

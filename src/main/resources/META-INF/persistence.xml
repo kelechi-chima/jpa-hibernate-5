@@ -4,19 +4,19 @@
     http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
 
-    <persistence-unit name="auction" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <properties>
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/auction"/>
-            <property name="javax.persistence.jdbc.user" value="test"/>
-            <property name="javax.persistence.jdbc.password" value="test"/>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:~/test"/>
+            <property name="javax.persistence.jdbc.user" value="sa"/>
+            <property name="javax.persistence.jdbc.password" value="sa"/>
+            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
 
-            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="false"/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.use_identifier_rollback" value="false"/>
 
             <property name="hibernate.c3p0.min_size" value="5"/>
